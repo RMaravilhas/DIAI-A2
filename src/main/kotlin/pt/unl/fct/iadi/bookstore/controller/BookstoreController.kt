@@ -3,7 +3,12 @@ package pt.unl.fct.iadi.bookstore.controller
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
-import pt.unl.fct.iadi.bookstore.controller.dto.*
+import pt.unl.fct.iadi.bookstore.controller.dto.BookCreateRequest
+import pt.unl.fct.iadi.bookstore.controller.dto.BookPatchRequest
+import pt.unl.fct.iadi.bookstore.controller.dto.BookResponse
+import pt.unl.fct.iadi.bookstore.controller.dto.ReviewCreateRequest
+import pt.unl.fct.iadi.bookstore.controller.dto.ReviewPatchRequest
+import pt.unl.fct.iadi.bookstore.controller.dto.ReviewResponse
 import pt.unl.fct.iadi.bookstore.domain.Book
 import pt.unl.fct.iadi.bookstore.domain.Review
 import pt.unl.fct.iadi.bookstore.service.BookNotFoundException

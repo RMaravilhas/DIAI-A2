@@ -80,9 +80,9 @@ class BookstoreService {
 
     fun createReview(isbn: String, rating: Int, comment: String?): Review {
         if (!books.containsKey(isbn)) throw BookNotFoundException(isbn)
-        val id = reviewIdCounter.getAndIncrement()
-        val review = Review(id, isbn, rating, comment)
-        reviews[id] = review
+        val reviewId = reviewIdCounter.getAndIncrement()
+        val review = Review(reviewId, isbn, rating, comment)
+        reviews[reviewId] = review
         return review
     }
 

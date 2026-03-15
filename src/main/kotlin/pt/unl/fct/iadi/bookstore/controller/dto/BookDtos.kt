@@ -50,7 +50,7 @@ data class BookPatchRequest(
     val author: String? = null,
 
     @field:DecimalMin(value = "0.01", message = "Price must be greater than 0")
-    @Schema(description = "New price (optional)", example = "24.99", nullable = true)
+    @Schema(description = "New price (optional)", example = "24.99", nullable = true, minimum = "0.01")
     val price: Double? = null,
 
     @field:Pattern(
@@ -74,7 +74,7 @@ data class BookResponse(
     @Schema(description = "Book author", example = "Joshua Bloch")
     val author: String,
 
-    @Schema(description = "Price in euros", example = "29.99")
+    @Schema(description = "Price in euros", example = "29.99", minimum = "0.01")
     val price: Double,
 
     @Schema(description = "URL of the book cover image", example = "https://example.com/cover.jpg")
