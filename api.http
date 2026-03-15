@@ -1,0 +1,360 @@
+### Bookstore API — IntelliJ HTTP Client Sample Requests
+### Base URL
+@baseUrl = http://localhost:8080
+
+##############################################################################
+# US1 — List all books
+##############################################################################
+
+### List books (empty catalog)
+GET {{baseUrl}}/books
+Accept: application/json
+
+### List books (after adding some)
+GET {{baseUrl}}/books
+Accept: application/json
+
+##############################################################################
+# US2 — Create a book
+##############################################################################
+
+### Create book — success
+POST {{baseUrl}}/books
+Content-Type: application/json
+
+{
+  "isbn": "9780134685991",
+  "title": "Effective Java",
+  "author": "Joshua Bloch",
+  "price": 39.99,
+  "image": "https://example.com/effective-java.jpg"
+}
+
+### Create book — another book
+POST {{baseUrl}}/books
+Content-Type: application/json
+
+{
+  "isbn": "9780132350884",
+  "title": "Clean Code",
+  "author": "Robert C. Martin",
+  "price": 29.99,
+  "image": "https://example.com/clean-code.jpg"
+}
+
+### Create book — conflict (duplicate ISBN)
+POST {{baseUrl}}/books
+Content-Type: application/json
+
+{
+  "isbn": "9780134685991",
+  "title": "Effective Java",
+  "author": "Joshua Bloch",
+  "price": 39.99,
+  "image": "https://example.com/effective-java.jpg"
+}
+
+### Create book — validation error (missing title)
+POST {{baseUrl}}/books
+Content-Type: application/json
+
+{
+  "isbn": "9781234567890",
+  "title": "",
+  "author": "Some Author",
+  "price": 19.99,
+  "image": "https://example.com/book.jpg"
+}
+
+### Create book — validation error (price <= 0)
+POST {{baseUrl}}/books
+Content-Type: application/json
+
+{
+  "isbn": "9781234567891",
+  "title": "Free Book",
+  "author": "Some Author",
+  "price": 0,
+  "image": "https://example.com/book.jpg"
+}
+
+### Create book — validation error (invalid image URL)
+POST {{baseUrl}}/books
+Content-Type: application/json
+
+{
+  "isbn": "9781234567892",
+  "title": "Bad Image",
+  "author": "Some Author",
+  "price": 9.99,
+  "image": "not-a-valid-url"
+}
+
+##############################################################################
+# US3 — Get a single book
+##############################################################################
+
+### Get book — success (English, default)
+GET {{baseUrl}}/books/9780134685991
+Accept: application/json
+Accept-Language: en
+
+### Get book — success (Portuguese header)
+GET {{baseUrl}}/books/9780134685991
+Accept: application/json
+Accept-Language: pt
+
+### Get book — not found (English)
+GET {{baseUrl}}/books/0000000000000
+Accept: application/json
+Accept-Language: en
+
+### Get book — not found (Portuguese error message)
+GET {{baseUrl}}/books/0000000000000
+Accept: application/json
+Accept-Language: pt
+
+##############################################################################
+# US4 — Replace (upsert) a book
+##############################################################################
+
+### Replace book — existing book (200 OK)
+PUT {{baseUrl}}/books/9780134685991
+Content-Type: application/json
+
+{
+  "isbn": "9780134685991",
+  "title": "Effective Java (3rd Edition)",
+  "author": "Joshua Bloch",
+  "price": 44.99,
+  "image": "https://example.com/effective-java-3rd.jpg"
+}
+
+### Replace book — upsert (new ISBN → 201 Created)
+PUT {{baseUrl}}/books/9789876543210
+Content-Type: application/json
+
+{
+  "isbn": "9789876543210",
+  "title": "Design Patterns",
+  "author": "Gang of Four",
+  "price": 49.99,
+  "image": "https://example.com/design-patterns.jpg"
+}
+
+### Replace book — validation error (blank author)
+PUT {{baseUrl}}/books/9780134685991
+Content-Type: application/json
+
+{
+  "isbn": "9780134685991",
+  "title": "Effective Java",
+  "author": "",
+  "price": 39.99,
+  "image": "https://example.com/effective-java.jpg"
+}
+
+##############################################################################
+# US5 — Partially update a book
+##############################################################################
+
+### Patch book — update price only
+PATCH {{baseUrl}}/books/9780134685991
+Content-Type: application/json
+
+{
+  "price": 34.99
+}
+
+### Patch book — update title and image
+PATCH {{baseUrl}}/books/9780134685991
+Content-Type: application/json
+
+{
+  "title": "Effective Java, 3rd Edition",
+  "image": "https://example.com/ej3.jpg"
+}
+
+### Patch book — not found
+PATCH {{baseUrl}}/books/0000000000000
+Content-Type: application/json
+
+{
+  "price": 9.99
+}
+
+### Patch book — validation error (price <= 0)
+PATCH {{baseUrl}}/books/9780134685991
+Content-Type: application/json
+
+{
+  "price": -5.00
+}
+
+##############################################################################
+# US6 — Delete a book
+##############################################################################
+
+### Delete book — success (204 No Content)
+DELETE {{baseUrl}}/books/9780132350884
+
+### Delete book — not found (404)
+DELETE {{baseUrl}}/books/0000000000000
+
+##############################################################################
+# US7 — List reviews for a book
+##############################################################################
+
+### List reviews — success (possibly empty)
+GET {{baseUrl}}/books/9780134685991/reviews
+Accept: application/json
+
+### List reviews — book not found
+GET {{baseUrl}}/books/0000000000000/reviews
+Accept: application/json
+
+##############################################################################
+# US8 — Create a review
+##############################################################################
+
+### Create review — success with comment
+POST {{baseUrl}}/books/9780134685991/reviews
+Content-Type: application/json
+
+{
+  "rating": 5,
+  "comment": "One of the best Java books ever written."
+}
+
+### Create review — success without comment
+POST {{baseUrl}}/books/9780134685991/reviews
+Content-Type: application/json
+
+{
+  "rating": 3
+}
+
+### Create review — book not found
+POST {{baseUrl}}/books/0000000000000/reviews
+Content-Type: application/json
+
+{
+  "rating": 4,
+  "comment": "Good book"
+}
+
+### Create review — validation error (rating out of range)
+POST {{baseUrl}}/books/9780134685991/reviews
+Content-Type: application/json
+
+{
+  "rating": 6,
+  "comment": "Invalid rating"
+}
+
+### Create review — validation error (comment too long)
+POST {{baseUrl}}/books/9780134685991/reviews
+Content-Type: application/json
+
+{
+  "rating": 4,
+  "comment": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+}
+
+##############################################################################
+# US9 — Replace a review (full replace)
+##############################################################################
+
+### Replace review — success (id=1)
+PUT {{baseUrl}}/books/9780134685991/reviews/1
+Content-Type: application/json
+
+{
+  "rating": 4,
+  "comment": "Updated: Very good, but not perfect."
+}
+
+### Replace review — book not found
+PUT {{baseUrl}}/books/0000000000000/reviews/1
+Content-Type: application/json
+
+{
+  "rating": 4
+}
+
+### Replace review — review not found
+PUT {{baseUrl}}/books/9780134685991/reviews/9999
+Content-Type: application/json
+
+{
+  "rating": 2,
+  "comment": "Should not exist"
+}
+
+### Replace review — validation error (rating = 0)
+PUT {{baseUrl}}/books/9780134685991/reviews/1
+Content-Type: application/json
+
+{
+  "rating": 0
+}
+
+##############################################################################
+# US10 — Partially update a review
+##############################################################################
+
+### Patch review — update rating only
+PATCH {{baseUrl}}/books/9780134685991/reviews/1
+Content-Type: application/json
+
+{
+  "rating": 5
+}
+
+### Patch review — update comment only
+PATCH {{baseUrl}}/books/9780134685991/reviews/1
+Content-Type: application/json
+
+{
+  "comment": "After re-reading: actually a masterpiece!"
+}
+
+### Patch review — book not found
+PATCH {{baseUrl}}/books/0000000000000/reviews/1
+Content-Type: application/json
+
+{
+  "rating": 3
+}
+
+### Patch review — review not found
+PATCH {{baseUrl}}/books/9780134685991/reviews/9999
+Content-Type: application/json
+
+{
+  "rating": 3
+}
+
+##############################################################################
+# US11 — Delete a review
+##############################################################################
+
+### Delete review — success (204 No Content)
+DELETE {{baseUrl}}/books/9780134685991/reviews/2
+
+### Delete review — book not found
+DELETE {{baseUrl}}/books/0000000000000/reviews/1
+
+### Delete review — review not found
+DELETE {{baseUrl}}/books/9780134685991/reviews/9999
+
+##############################################################################
+# OpenAPI / Swagger
+##############################################################################
+
+### OpenAPI JSON spec
+GET {{baseUrl}}/v3/api-docs
+Accept: application/json
+
+### Swagger UI (open in browser)
+# http://localhost:8080/swagger-ui.html
