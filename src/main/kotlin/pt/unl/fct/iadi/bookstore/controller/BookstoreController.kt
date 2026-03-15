@@ -27,13 +27,13 @@ class BookstoreController(private val service: BookstoreService) : BookstoreAPI 
     override fun listBooks(): ResponseEntity<List<BookResponse>> =
         ResponseEntity.ok(service.listBooks().map { it.toResponse() })
 
-    override fun createBook(body: BookCreateRequest): ResponseEntity<BookResponse> {
+    override fun createBook(body: BookCreateRequest): ResponseEntity<Void> {
         val book = service.createBook(body.isbn, body.title, body.author, body.price, body.image)
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{isbn}")
             .buildAndExpand(book.isbn)
             .toUri()
-        return ResponseEntity.created(location).body(book.toResponse())
+        return ResponseEntity.created(location).build()
     }
 
     override fun getBook(isbn: String, language: String): ResponseEntity<BookResponse> {
@@ -73,13 +73,13 @@ class BookstoreController(private val service: BookstoreService) : BookstoreAPI 
     override fun listReviews(isbn: String): ResponseEntity<List<ReviewResponse>> =
         ResponseEntity.ok(service.listReviews(isbn).map { it.toResponse() })
 
-    override fun createReview(isbn: String, body: ReviewCreateRequest): ResponseEntity<ReviewResponse> {
+    override fun createReview(isbn: String, body: ReviewCreateRequest): ResponseEntity<Void> {
         val review = service.createReview(isbn, body.rating, body.comment)
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{reviewId}")
             .buildAndExpand(review.id)
             .toUri()
-        return ResponseEntity.created(location).body(review.toResponse())
+        return ResponseEntity.created(location).build()
     }
 
     override fun replaceReview(isbn: String, reviewId: Long, body: ReviewCreateRequest): ResponseEntity<ReviewResponse> {

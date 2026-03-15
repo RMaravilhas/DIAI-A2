@@ -47,9 +47,8 @@ interface BookstoreAPI {
     @Operation(summary = "Create a book", description = "Registers a new book in the catalog.")
     @ApiResponses(
         ApiResponse(
-            responseCode = "201", description = "Book created",
-            headers = [Header(name = "Location", description = "URL of the created book")],
-            content = [Content(schema = Schema(implementation = BookResponse::class))]
+            responseCode = "201", description = "Book created — see Location header for the new resource URL",
+            headers = [Header(name = "Location", description = "URL of the created book")]
         ),
         ApiResponse(
             responseCode = "409", description = "A book with this ISBN already exists",
@@ -61,7 +60,7 @@ interface BookstoreAPI {
         )
     )
     @PostMapping(consumes = ["application/json"])
-    fun createBook(@Valid @RequestBody body: BookCreateRequest): ResponseEntity<BookResponse>
+    fun createBook(@Valid @RequestBody body: BookCreateRequest): ResponseEntity<Void>
 
     @Operation(summary = "Get a book by ISBN")
     @ApiResponses(
@@ -168,9 +167,8 @@ interface BookstoreAPI {
     @Operation(summary = "Add a review to a book")
     @ApiResponses(
         ApiResponse(
-            responseCode = "201", description = "Review created",
-            headers = [Header(name = "Location", description = "URL of the created review")],
-            content = [Content(schema = Schema(implementation = ReviewResponse::class))]
+            responseCode = "201", description = "Review created — see Location header for the new resource URL",
+            headers = [Header(name = "Location", description = "URL of the created review")]
         ),
         ApiResponse(
             responseCode = "404", description = "Book not found",
@@ -186,7 +184,7 @@ interface BookstoreAPI {
         @Parameter(description = "ISBN of the book", required = true)
         @PathVariable isbn: String,
         @Valid @RequestBody body: ReviewCreateRequest
-    ): ResponseEntity<ReviewResponse>
+    ): ResponseEntity<Void>
 
     @Tag(name = "Reviews")
     @Operation(summary = "Replace a review")
